@@ -130,6 +130,10 @@ int32_t main(int32_t argc, int8_t *argv[])
         return 6;
     }
 
+    fseek(fkey, 0, SEEK_SET);
+    uint8_t key_block[raw_data_width];
+    memset(key_block, 0, raw_data_width * sizeof(uint8_t));
+
     // Começa o processo de escrita no arquivo de saída
     FILE *fout = fopen(argv[3], "w");
     if (!fout) {
@@ -157,6 +161,7 @@ int32_t main(int32_t argc, int8_t *argv[])
 
     uint32_t height, j;
     for (height = info_header.px_height; height-- > 0;) {
+        fread(key_block,  sizeof(uint8_t), raw_data_width,   fkey);
         fread(padded_row, sizeof(uint8_t), data_table_width, fin);
     }
 
