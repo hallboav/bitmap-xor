@@ -130,6 +130,17 @@ int32_t main(int32_t argc, int8_t *argv[])
         return 6;
     }
 
+    // Começa o processo de escrita no arquivo de saída
+    FILE *fout = fopen(argv[3], "w");
+    if (!fout) {
+        fprintf(stderr, "%s\n", strerror(errno));
+
+        fclose(fkey);
+        fclose(fin);
+        return 7;
+    }
+
+    fclose(fout);
     fclose(fkey);
     fclose(fin);
 
