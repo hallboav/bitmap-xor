@@ -13,6 +13,21 @@ typedef struct {
     uint32_t offset_bits;
 } bitmap_file_header_t;
 
+// v3
+typedef struct {
+    uint32_t size;
+    int32_t  px_width;
+    int32_t  px_height;
+    uint16_t planes;
+    uint16_t bit_count;
+    uint32_t compression;
+    uint32_t image_size;  // in bytes
+    int32_t  x_pixels_per_meter;
+    int32_t  y_pixels_per_meter;
+    uint32_t colors_used; // 2 ^ bit_count
+    uint32_t color_important;
+} bitmap_info_header_t;
+
 int32_t main(int32_t argc, int8_t *argv[])
 {
     if (argc != 4) {
@@ -43,13 +58,19 @@ int32_t main(int32_t argc, int8_t *argv[])
     }
 
     bitmap_file_header_t file_header;
+    bitmap_info_header_t info_header;
     memset(&file_header, 0, sizeof(bitmap_file_header_t));
+    memset(&info_header, 0, sizeof(bitmap_info_header_t));
 
     fseek(fin, 0, SEEK_SET);
     fread(&file_header.type,        sizeof(uint16_t), 1, fin);
     fread(&file_header.size,        sizeof(uint32_t), 1, fin);
     fread(&file_header.reserved,    sizeof(uint32_t), 1, fin);
     fread(&file_header.offset_bits, sizeof(uint32_t), 1, fin);
+
+    // É suportado chamar apenas um fread, pois
+    // sizeof(bitmap_info_header_t) é multiplo de 8 (sem padding)
+    fread(&info_header, 1, sizeof(bitmap_info_header_t), fin);
 
     fclose(fin);
     return 0;
