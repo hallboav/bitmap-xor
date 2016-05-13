@@ -6,6 +6,8 @@
 #define BITMAP_INFO_HEADER_SIZE  40
 #define BITMAP_INFO_HEADER_START 14
 
+#define GET_PADDING(N) N % 4 ? N + (4 - (N % 4)) : N
+
 typedef struct {
     uint16_t type;
     uint32_t size;
@@ -95,6 +97,11 @@ int32_t main(int32_t argc, int8_t *argv[])
     color_definition_t indexed_color[info_header.colors_used];
     memset(indexed_color, 0, info_header.colors_used * sizeof(color_definition_t));
     fread(indexed_color, sizeof(color_definition_t), info_header.colors_used, fin);
+
+    // Esse cálculo é válido apenas para 1 bit
+    // Arredondamento da divisão para cima
+    uint32_t raw_data_width = (info_header.px_width + (8 - 1)) / 8;
+    uint32_t data_table_width = GET_PADDING(raw_data_width);
 
     fclose(fin);
     return 0;
