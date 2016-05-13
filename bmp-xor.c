@@ -28,6 +28,13 @@ typedef struct {
     uint32_t color_important;
 } bitmap_info_header_t;
 
+typedef struct {
+    uint8_t blue;
+    uint8_t green;
+    uint8_t red;
+    uint8_t reserved;
+} color_definition_t;
+
 int32_t main(int32_t argc, int8_t *argv[])
 {
     if (argc != 4) {
@@ -71,6 +78,23 @@ int32_t main(int32_t argc, int8_t *argv[])
     // É suportado chamar apenas um fread, pois
     // sizeof(bitmap_info_header_t) é multiplo de 8 (sem padding)
     fread(&info_header, 1, sizeof(bitmap_info_header_t), fin);
+
+    if (info_header.bit_count != 1) {
+        fprintf(
+            stderr,
+            "Bit depth found: %u bits\n"
+            "Only 1 bit depth is supported\n",
+            info_header.bit_count
+        );
+
+        fclose(fin);
+        return 4;
+    }
+
+    // Lendo tabela de cores
+    color_definition_t indexed_color[info_header.colors_used];
+    memset(indexed_color, 0, info_header.colors_used * sizeof(color_definition_t));
+    fread(indexed_color, sizeof(color_definition_t), info_header.colors_used, fin);
 
     fclose(fin);
     return 0;
