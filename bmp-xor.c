@@ -103,6 +103,17 @@ int32_t main(int32_t argc, int8_t *argv[])
     uint32_t raw_data_width = (info_header.px_width + (8 - 1)) / 8;
     uint32_t data_table_width = GET_PADDING(raw_data_width);
 
+    // Prepara leitura da chave para memória
+    FILE *fkey = fopen(argv[2], "rb");
+    if (!fkey) {
+        fprintf(stderr, "%s\n", strerror(errno));
+
+        fclose(fin);
+        return 5;
+    }
+
+    fclose(fkey);
     fclose(fin);
+
     return 0;
 }
