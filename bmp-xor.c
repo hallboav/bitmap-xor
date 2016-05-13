@@ -152,6 +152,14 @@ int32_t main(int32_t argc, int8_t *argv[])
     // Tabela de índices de cores
     fwrite(indexed_color, sizeof(color_definition_t), info_header.colors_used, fout);
 
+    uint8_t padded_row[data_table_width];
+    memset(padded_row, 0, data_table_width * sizeof(uint8_t));
+
+    uint32_t height, j;
+    for (height = info_header.px_height; height-- > 0;) {
+        fread(padded_row, sizeof(uint8_t), data_table_width, fin);
+    }
+
     fclose(fout);
     fclose(fkey);
     fclose(fin);
