@@ -112,6 +112,24 @@ int32_t main(int32_t argc, int8_t *argv[])
         return 5;
     }
 
+    fseek(fkey, 0, SEEK_END);
+    long int key_size = ftell(fkey);
+    uint32_t image_data_size = raw_data_width * info_header.px_height;
+
+    if (key_size != image_data_size) {
+        fprintf(
+            stderr,
+            "Key data size: %ld bytes\n"
+            "Image data size: %u bytes (without padding)\n"
+            "Size of key data must be equal of image data table size (without padding)\n",
+            key_size, image_data_size
+        );
+
+        fclose(fkey);
+        fclose(fin);
+        return 6;
+    }
+
     fclose(fkey);
     fclose(fin);
 
