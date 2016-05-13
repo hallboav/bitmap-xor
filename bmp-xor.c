@@ -163,6 +163,13 @@ int32_t main(int32_t argc, int8_t *argv[])
     for (height = info_header.px_height; height-- > 0;) {
         fread(key_block,  sizeof(uint8_t), raw_data_width,   fkey);
         fread(padded_row, sizeof(uint8_t), data_table_width, fin);
+
+        // Aplicando xor em cada byte "visível"
+        for (j = 0; j < raw_data_width; ++j) {
+            padded_row[j] ^= key_block[j];
+        }
+
+        fwrite(padded_row, sizeof(uint8_t), data_table_width, fout);
     }
 
     fclose(fout);
