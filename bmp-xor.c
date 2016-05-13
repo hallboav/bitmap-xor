@@ -140,6 +140,18 @@ int32_t main(int32_t argc, int8_t *argv[])
         return 7;
     }
 
+    // Cabeçalho do arquivo
+    fwrite(&file_header.type,        sizeof(uint16_t), 1, fout);
+    fwrite(&file_header.size,        sizeof(uint32_t), 1, fout);
+    fwrite(&file_header.reserved,    sizeof(uint32_t), 1, fout);
+    fwrite(&file_header.offset_bits, sizeof(uint32_t), 1, fout);
+
+    // Cabeçalho das informações da imagem
+    fwrite(&info_header, sizeof(bitmap_info_header_t), 1, fout);
+
+    // Tabela de índices de cores
+    fwrite(indexed_color, sizeof(color_definition_t), info_header.colors_used, fout);
+
     fclose(fout);
     fclose(fkey);
     fclose(fin);
